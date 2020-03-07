@@ -57,8 +57,8 @@ export class CodeManager{
         const file = this.getFile();
         this.channel.clear();
         this.channel.appendLine('Start running ...');
-        this.currentProcess = child_process.exec(`powershell "Measure-Command{&\\"${file.executablePath}\\"}"`, (error, stdout, stderr) => {
-            console.log(`powershell "Measure-Command{&\\"${file.executablePath}\\"}"`);
+        this.currentProcess = child_process.exec(`powershell "cd ${file.directory}; Measure-Command{&\\"${file.executablePath}\\"}"`, (error, stdout, stderr) => {
+            console.log(`powershell "cd ${file.directory}; Measure-Command{&\\"${file.executablePath}\\"}"`);
             let seconds = stdout.split('\n')[11];
             this.channel.appendLine(seconds);
             let milliseconds = stdout.split('\n')[12];
