@@ -6,4 +6,14 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.0.2] - 2020-3-22
+
+### Changed
+
+- Fix a problem in time test.
+- Add flags about stack size.
+- Make sure to save before compiling.
+
+## [0.0.1] - 2020-2-25
+
 - Initial release
