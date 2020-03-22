@@ -11,21 +11,22 @@ export class CodeManager{
         this.channel = vscode.window.createOutputChannel('Poor Code Runner');
     }
     public compile(){
-        vscode.window.activeTextEditor?.document.save();
-        const file = this.getFile();
-        if(fs.existsSync(file.directory + '\\' + file.executable)){
-            try {
-                fs.unlinkSync(file.directory + '\\' + file.executable);
-            } catch(err) {
-                if(err) {console.error(err);}
-                else {console.log('Successfully deleted executable.');}
+        vscode.window.activeTextEditor?.document.save().then(() => {
+            const file = this.getFile();
+            if(fs.existsSync(file.directory + '\\' + file.executable)){
+                try {
+                    fs.unlinkSync(file.directory + '\\' + file.executable);
+                } catch(err) {
+                    if(err) {console.error(err);}
+                    else {console.log('Successfully deleted executable.');}
+                }
             }
-        }
-        else {console.log('No executable exists.');}
-        this.executeCommandInTerminal('cd \"' + file.directory + '\"');
-        this.executeCommandInTerminal('clear');
-        let compilerFlags = vscode.workspace.getConfiguration('poor-code-runner').get('compilerFlags');
-        this.executeCommandInTerminal('g++ "' + file.name + '" -o "' + file.title + '" ' + compilerFlags);
+            else {console.log('No executable exists.');}
+            this.executeCommandInTerminal('cd \"' + file.directory + '\"');
+            this.executeCommandInTerminal('clear');
+            let compilerFlags = vscode.workspace.getConfiguration('poor-code-runner').get('compilerFlags');
+            this.executeCommandInTerminal('g++ "' + file.name + '" -o "' + file.title + '" ' + compilerFlags);
+        });
     }
     public run(){
         const file = this.getFile();

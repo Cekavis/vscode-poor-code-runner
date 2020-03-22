@@ -87,7 +87,7 @@
 			"properties": {
 				"poor-code-runner.compilerFlags": {
 					"type": "string",
-					"default": "-Wall -O2 -std=c++11",
+					"default": "-Wall -O2 -std=c++11 \"-Wl,--stack=998244353\"",
 					"description": "Compiler flags for g++"
 				}
 			}
