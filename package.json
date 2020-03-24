@@ -3,10 +3,10 @@
 	"displayName": "Poor Code Runner",
 	"description": "",
 	"version": "0.0.3",
-	"publisher": "CMXRYNP",
+	"publisher": "cekavis",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/CMXRYNP/vscode-poor-code-runner.git"
+		"url": "https://github.com/Cekavis/vscode-poor-code-runner.git"
 	},
 	"engines": {
 		"vscode": "^1.42.0"
