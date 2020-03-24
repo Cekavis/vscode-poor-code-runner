@@ -6,6 +6,12 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.0.3] - 2020-3-24
+
+### Changed
+
+- Fix the execution sequence of compile and run
+
 ## [0.0.2] - 2020-3-22
 
 ### Changed
