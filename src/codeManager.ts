@@ -10,7 +10,7 @@ export class CodeManager{
     constructor() {
         this.channel = vscode.window.createOutputChannel('Poor Code Runner');
     }
-    public compile(){
+    public compile(callback?: (() => void)){
         vscode.window.activeTextEditor?.document.save().then(() => {
             const file = this.getFile();
             if(fs.existsSync(file.directory + '\\' + file.executable)){
@@ -26,6 +26,9 @@ export class CodeManager{
             this.executeCommandInTerminal('clear');
             let compilerFlags = vscode.workspace.getConfiguration('poor-code-runner').get('compilerFlags');
             this.executeCommandInTerminal('g++ "' + file.name + '" -o "' + file.title + '" ' + compilerFlags);
+            if(callback){
+                callback();
+            }
         });
     }
     public run(){
@@ -46,8 +49,9 @@ export class CodeManager{
     }
     public compileRun(){
         const file = this.getFile();
-        this.compile();
-        this.executeCommandInTerminal(`start cmd "/c .\\""${file.executable}"" & echo. & pause"`);
+        this.compile(() => {
+            this.executeCommandInTerminal(`start cmd "/c .\\""${file.executable}"" & echo. & pause"`);
+        });
     }
     public testTime(){
         this.channel.show(true);
