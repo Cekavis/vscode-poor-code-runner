@@ -4,6 +4,7 @@ import { SampleManager } from './sampleManager';
 
 export function activate(context: vscode.ExtensionContext) {
 
+	//C:\Users\cmxrynp\AppData\Roaming\Code\User\globalStorage\cekavis.poor-code-runner\samples.json
 	const storagePath = context.globalStoragePath+'\\samples.json';
 	const codeManager = new CodeManager();
 	const sampleManager = new SampleManager(storagePath);
@@ -11,9 +12,9 @@ export function activate(context: vscode.ExtensionContext) {
 	vscode.window.onDidCloseTerminal(() => {
 		codeManager.onDidCloseTerminal();
 	});
-	sampleManager.update();
+	sampleManager.update(codeManager.getFile());
 	vscode.window.onDidChangeActiveTextEditor(() => {
-		sampleManager.update();
+		sampleManager.update(codeManager.getFile());
 	});
 
 	const compile = vscode.commands.registerCommand('extension.compile', () => {
@@ -32,10 +33,20 @@ export function activate(context: vscode.ExtensionContext) {
 		sampleManager.fetchSamples();
 	});
 	const batchTest = vscode.commands.registerCommand('extension.batchTest', () => {
-		codeManager.batchTest(storagePath, sampleManager.problemId());
+		codeManager.batchTest(storagePath, sampleManager.samples());
 	});
 	const killTimeTest = vscode.commands.registerCommand('extension.killTimeTest', () => {
 		codeManager.killTimeTest();
+	});
+	const setUrl = vscode.commands.registerCommand('extension.setUrl', () => {
+        vscode.window.showInputBox({
+			password:false,
+			ignoreFocusOut:true,
+            prompt:'请输入该文件对应的题目网址',
+        }).then(function(url){
+            console.log('User input: ', url);
+			sampleManager.update(codeManager.getFile(), url);
+        });
 	});
 
 	context.subscriptions.push(compile);
@@ -45,6 +56,7 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(fetchSamples);
 	context.subscriptions.push(batchTest);
 	context.subscriptions.push(killTimeTest);
+	context.subscriptions.push(setUrl);
 }
 
 export function deactivate() {}

@@ -90,27 +90,7 @@ export class CodeManager{
     public onDidCloseTerminal(){
         this.terminal = undefined;
     }
-    public batchTest(storagePath: string, id: string){
-        const file = this.getFile();
-        fs.readFile(storagePath, (err, data) => {
-            if(err){ return console.error(err);}
-            let content = JSON.parse(data.toString());
-            let testId = 1;
-            this.channel.clear();
-            this.channel.show(true);
-            content[id].forEach((ele: { input: string; output: string;}) => {
-                this.channel.append(`Running test ${testId} (Time limit is 5000 ms) ... `);
-                let stdout = child_process.execFileSync(file.executablePath, [], {input: ele.input, timeout: 5000}).toString();
-                if(compare(stdout, ele.output)){
-                    this.channel.appendLine('Passed.');
-                } else {
-                    this.channel.appendLine('Failed!');
-                    this.channel.appendLine('Your Output:\n' + stdout);
-                    throw new Error('Test failed');
-                }
-                ++testId;
-            });
-        });
+    public batchTest(storagePath: string, samples: any[]){
         let compare = (a: string, b: string) => {
             return reduce(a)===reduce(b);
         };
@@ -120,10 +100,24 @@ export class CodeManager{
             s = s.replace(/\s+(?![\s\S])/g, '');
             return s;
         };
+        const file = this.getFile();
+        let testId = 1;
+        this.channel.clear();
+        this.channel.show(true);
+        samples.forEach((ele: { input: string; output: string;}) => {
+            this.channel.append(`Running test ${testId} (Time limit is 5000 ms) ... `);
+            let stdout = child_process.execFileSync(file.executablePath, [], {input: ele.input, timeout: 5000}).toString();
+            if(compare(stdout, ele.output)){
+                this.channel.appendLine('Passed.');
+            } else {
+                this.channel.appendLine('Failed!');
+                this.channel.appendLine('Your Output:\n' + stdout);
+                throw new Error('Test failed');
+            }
+            ++testId;
+        });
     }
-
-
-    private getFile() {
+    public getFile() {
         if (!vscode.window || !vscode.window.activeTextEditor || !vscode.window.activeTextEditor.document) {
             throw new Error('Invalide active text editor document!');
         }
@@ -141,6 +135,8 @@ export class CodeManager{
             : path.basename(doc.fileName, path.extname(doc.fileName)))
         };
     }
+
+
     private executeCommandInTerminal(command: string) {
         if(!this.terminal){
             this.terminal = vscode.window.createTerminal(

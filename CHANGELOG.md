@@ -6,6 +6,17 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.1.0] - 2020-3-26
+
+### Added
+
+- Add support for [AtCoder](https://atcoder.jp).
+- User now can manually set the problem url of the C++ file by clicking left bottom area displaying current url of the problem (or `Not specified`) or run the command `poor-code-runner.setUrl`.
+
+### Changed
+
+- Change the local storage format.
+
 ## [0.0.3] - 2020-3-24
 
 ### Changed

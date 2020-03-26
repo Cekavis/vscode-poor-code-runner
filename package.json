@@ -4,6 +4,7 @@
 	"description": "",
 	"version": "0.0.3",
 	"publisher": "cekavis",
+	"license": "GPL-3.0-only",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/Cekavis/vscode-poor-code-runner.git"
@@ -47,6 +48,10 @@
 			{
 				"command": "extension.killTimeTest",
 				"title": "Kill running time test"
+			},
+			{
+				"command": "extension.setUrl",
+				"title": "Set custom problem url"
 			}
 		],
 		"keybindings": [
