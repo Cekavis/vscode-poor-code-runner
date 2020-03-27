@@ -1,10 +1,7 @@
 import * as vscode from 'vscode';
-// import * as express from 'express';
 import * as superagent from 'superagent';
 import * as cheerio from 'cheerio';
 import * as fs from 'fs';
-import * as path from 'path';
-import * as child_process from 'child_process';
 
 export class SampleManager{
     private statusDisplay: vscode.StatusBarItem;
@@ -22,6 +19,7 @@ export class SampleManager{
         this.initStorage(() => {
             if(!isManual){
                 let content = JSON.parse(fs.readFileSync(this.storagePath).toString());
+                if(!content.url){ content.url={};}
                 if(content.url[file.path]){
                     url = content.url[file.path];
                 }
