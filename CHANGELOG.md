@@ -6,6 +6,12 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.1.2] - 2020-3-27
+
+### Changed
+
+- Reconstruct and fix batch test.
+
 ## [0.1.1] - 2020-3-27
 
 ### Changed

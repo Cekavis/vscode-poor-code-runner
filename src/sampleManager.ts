@@ -16,16 +16,10 @@ export class SampleManager{
         if(!doc || doc.languageId !== 'cpp') {return this.display(undefined, false);}
 
         const isManual = url !== undefined;
-        this.initStorage(() => {
-            if(!isManual){
-                let content = JSON.parse(fs.readFileSync(this.storagePath).toString());
-                if(!content.url){ content.url={};}
-                if(content.url[file.path]){
-                    url = content.url[file.path];
-                }
-                else{
-                    url = "";
-                }
+        this.loadJSONAsync().then((content) => {
+            if(url === undefined){
+                if(content.url[file.path]){ url = content.url[file.path];}
+                else{ url = "";}
             }
             if(url === ""){
                 const res = /(\d+)\s*([a-zA-Z]\d*)/g.exec(file.title);
@@ -35,32 +29,26 @@ export class SampleManager{
                 url = 'https://codeforces.com/contest/'+cfCId+'/problem/'+cfPId;
             }
             this.display(url);
-
-            fs.readFile(this.storagePath, (err, data) => {
+            content.url[file.path]=this.currentUrl;
+            fs.writeFile(this.storagePath, JSON.stringify(content), (err) => {
                 if(err){ return console.error(err);}
-                let content = JSON.parse(data.toString());
-                if(!content.url){ content.url={};}
-                content.url[file.path]=this.currentUrl;
-                fs.writeFile(this.storagePath, JSON.stringify(content), (err) => {
-                    if(err){ return console.error(err);}
-                    console.log('Push url successful');
-                    this.fetchSamples(isManual);
-                });
+                console.log('Push url successful');
+                this.fetchSamples(isManual);
             });
         });
     }
-    public samples(): any[]{
+    public samples(): Promise<any> {
         if(!this.currentUrl){
             vscode.window.showErrorMessage('Can\'t find the problem');
-            return [];
+            throw new Error('Can\'t find the problem');
         }
-        this.initStorage();
-        return JSON.parse(fs.readFileSync(this.storagePath).toString()).samples[this.currentUrl];
+        return this.loadJSONAsync().then((content) => {
+            return content.samples[this.currentUrl!];
+        });
     }
-    public fetchSamples(force: boolean = false){
+
+    private fetchSamples(force: boolean = false){
         if(!this.currentUrl) { return console.error('Can\'t find the corresponding problem.');}
-        this.initStorage();
-        
         if(!force){
             try{
                 let origin = fs.readFileSync(this.storagePath);
@@ -81,7 +69,7 @@ export class SampleManager{
                 vscode.window.showErrorMessage(`访问失败 - ${err}`);
                 return;
             } else {
-                samples = extractSamples(res);
+                samples = this.extractSamples(res);
                 if(!samples.length){
                     return;
                 }
@@ -98,56 +86,69 @@ export class SampleManager{
                 });
             }
         });
-        let extractSamples = (res:superagent.Response) => {
-            let inputs: string[] = [];
-            let outputs: string[] = [];
-            let samples: any[] = [];
-            let $ = cheerio.load(res.text);
-        
-            if(this.currentUrl!.includes('codeforces')){
-                $('div.input pre').each((idx, ele) => {
-                    inputs.push($(ele).text());
-                });
-                $('div.output pre').each((idx, ele) => {
-                    outputs.push($(ele).text());
-                });
-            }
-            else if(this.currentUrl!.includes('atcoder')){
-                $('pre').each((idx, ele) =>{
-                    const prev = $(ele).prev();
-                    if(prev.text().startsWith('Sample Input')){
-                        inputs.push($(ele).text());
-                    }
-                    if(prev.text().startsWith('Sample Output')){
-                        outputs.push($(ele).text());
-                    }
-                });
-            }
-            else{
-                vscode.window.showErrorMessage('Unsupported site.');
-                return [];
-            }
-
-            // console.log(inputs);
-            // console.log(outputs);
-            // console.log(samples);
-
-            inputs.forEach((value, index, array) => {
-                samples.push({'input': value, 'output': outputs[index]});
-            });
-            return samples;
-        };
     }
+    private extractSamples(res:superagent.Response): any[] {
+        let inputs: string[] = [];
+        let outputs: string[] = [];
+        let samples: any[] = [];
+        let $ = cheerio.load(res.text);
+    
+        if(this.currentUrl!.includes('codeforces')){
+            $('div.input pre').each((idx, ele) => {
+                inputs.push($(ele).text());
+            });
+            $('div.output pre').each((idx, ele) => {
+                outputs.push($(ele).text());
+            });
+        }
+        else if(this.currentUrl!.includes('atcoder')){
+            $('pre').each((idx, ele) =>{
+                const prev = $(ele).prev();
+                if(prev.text().startsWith('Sample Input')){
+                    inputs.push($(ele).text());
+                }
+                if(prev.text().startsWith('Sample Output')){
+                    outputs.push($(ele).text());
+                }
+            });
+        }
+        else{
+            vscode.window.showErrorMessage('Unsupported site.');
+            return [];
+        }
 
-    private initStorage(callback?: () => void){
-        const dir = this.storagePath.substr(0, this.storagePath.length-12);
-        if(!fs.existsSync(dir)){
-            fs.mkdirSync(dir);
-        }
-        if(!fs.existsSync(this.storagePath)){
-            fs.writeFileSync(this.storagePath, '{}');
-        }
-        if(callback){ callback();}
+        // console.log(inputs);
+        // console.log(outputs);
+        // console.log(samples);
+
+        inputs.forEach((value, index, array) => {
+            samples.push({'input': value, 'output': outputs[index]});
+        });
+        return samples;
+    };
+    private loadJSONAsync(): Promise<any> {
+        return this.readJSONAsync().then((res) => {
+            let content = JSON.parse(res);
+            if(!content.url){ content.url={};}
+            if(!content.samples){ content.samples={};}
+            return content;
+        }).catch((err) => {
+            console.error(err);
+            vscode.window.showErrorMessage('Storage is broken.');
+        });
+    }
+    private readJSONAsync(): Promise<any> {
+        return new Promise((resolve, reject)=>{
+            const dir = this.storagePath.substr(0, this.storagePath.length-12);
+            if(!fs.existsSync(dir)){ fs.mkdirSync(dir);}
+            if(!fs.existsSync(this.storagePath)){
+                fs.writeFileSync(this.storagePath, '{}');
+            }
+            fs.readFile(this.storagePath, (err, result) => {
+                if(err){ reject(err);}
+                else{ resolve(result);}
+            });
+        });
     }
     private display(url?:string, show:boolean = true){
         this.statusDisplay.command = 'extension.setUrl';
@@ -160,5 +161,6 @@ export class SampleManager{
             // this.statusDisplay.command = '';
         }
         if(show) {this.statusDisplay.show();}
+        else {this.statusDisplay.hide();}
     }
 }

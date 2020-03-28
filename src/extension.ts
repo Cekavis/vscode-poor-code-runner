@@ -29,11 +29,8 @@ export function activate(context: vscode.ExtensionContext) {
 	const testTime = vscode.commands.registerCommand('extension.testTime', () => {
 		codeManager.testTime();
 	});
-	const fetchSamples = vscode.commands.registerCommand('extension.fetchSamples', () => {
-		sampleManager.fetchSamples();
-	});
 	const batchTest = vscode.commands.registerCommand('extension.batchTest', () => {
-		codeManager.batchTest(storagePath, sampleManager.samples());
+		codeManager.batchTest(sampleManager.samples());
 	});
 	const killTimeTest = vscode.commands.registerCommand('extension.killTimeTest', () => {
 		codeManager.killTimeTest();
@@ -53,7 +50,6 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(run);
 	context.subscriptions.push(compileRun);
 	context.subscriptions.push(testTime);
-	context.subscriptions.push(fetchSamples);
 	context.subscriptions.push(batchTest);
 	context.subscriptions.push(killTimeTest);
 	context.subscriptions.push(setUrl);

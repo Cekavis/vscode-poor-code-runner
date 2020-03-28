@@ -38,10 +38,6 @@
 				"title": "Test excutable running time"
 			},
 			{
-				"command": "extension.fetchSamples",
-				"title": "Fetch samples on Codeforces"
-			},
-			{
 				"command": "extension.batchTest",
 				"title": "Test all samples on Codeforces"
 			},

@@ -90,31 +90,24 @@ export class CodeManager{
     public onDidCloseTerminal(){
         this.terminal = undefined;
     }
-    public batchTest(storagePath: string, samples: any[]){
-        let compare = (a: string, b: string) => {
-            return reduce(a)===reduce(b);
-        };
-        let reduce = (s: string):string => {
-            s = s.replace('\r\n', '\n');
-            s = s.replace(/\s+\n/g, '\n');
-            s = s.replace(/\s+(?![\s\S])/g, '');
-            return s;
-        };
-        const file = this.getFile();
-        let testId = 1;
-        this.channel.clear();
-        this.channel.show(true);
-        samples.forEach((ele: { input: string; output: string;}) => {
-            this.channel.append(`Running test ${testId} (Time limit is 5000 ms) ... `);
-            let stdout = child_process.execFileSync(file.executablePath, [], {input: ele.input, timeout: 5000}).toString();
-            if(compare(stdout, ele.output)){
-                this.channel.appendLine('Passed.');
-            } else {
-                this.channel.appendLine('Failed!');
-                this.channel.appendLine('Your Output:\n' + stdout);
-                throw new Error('Test failed');
-            }
-            ++testId;
+    public batchTest(samples: Promise<any>){
+        samples.then((samples) => {
+            console.log('batchTest: ', samples);
+            if(samples === undefined){ throw new Error('Samples not find.');}
+            const file = this.getFile();
+            this.channel.clear();
+            this.channel.show(true);
+            samples.forEach((ele: { input: string; output: string;}, index: number) => {
+                this.channel.append(`Running test ${index} (Time limit is 5000 ms) ... `);
+                let stdout = child_process.execFileSync(file.executablePath, [], {input: ele.input, timeout: 5000}).toString();
+                if(this.compare(stdout, ele.output)){
+                    this.channel.appendLine('Passed.');
+                } else {
+                    this.channel.appendLine('Failed!');
+                    this.channel.appendLine('Your Output:\n' + stdout);
+                    throw new Error('Test failed');
+                }
+            });
         });
     }
     public getFile() {
@@ -137,6 +130,15 @@ export class CodeManager{
     }
 
 
+    private reduce(s: string):string {
+        s = s.replace('\r\n', '\n');
+        s = s.replace(/\s+\n/g, '\n');
+        s = s.replace(/\s+(?![\s\S])/g, '');
+        return s;
+    };
+    private compare (a: string, b: string) {
+        return this.reduce(a)===this.reduce(b);
+    };
     private executeCommandInTerminal(command: string) {
         if(!this.terminal){
             this.terminal = vscode.window.createTerminal(
