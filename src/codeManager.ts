@@ -25,7 +25,7 @@ export class CodeManager{
             this.executeCommandInTerminal('cd \"' + file.directory + '\"');
             this.executeCommandInTerminal('clear');
             let compilerFlags = vscode.workspace.getConfiguration('poor-code-runner').get('compilerFlags');
-            this.executeCommandInTerminal('g++ "' + file.name + '" -o "' + file.title + '" ' + compilerFlags);
+            this.executeCommandInTerminal('g++ "' + file.name + '" -o "' + file.executable + '" ' + compilerFlags);
             if(callback){
                 callback();
             }

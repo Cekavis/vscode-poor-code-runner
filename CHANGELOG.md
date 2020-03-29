@@ -6,6 +6,12 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.1.3] - 2020-3-29
+
+### Changed
+
+- Fix the compile instruction for filenames in the format of `aaa. bbb.cpp` (at least in my environment).
+
 ## [0.1.2] - 2020-3-27
 
 ### Changed
