@@ -6,6 +6,13 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.1.4] - 2020-3-30
+
+### Changed
+
+- Add support for [LibreOJ](https://loj.ac).
+- Optimize the feedback for RE in batch test.
+
 ## [0.1.3] - 2020-3-29
 
 ### Changed

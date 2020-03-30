@@ -99,13 +99,17 @@ export class CodeManager{
             this.channel.show(true);
             samples.forEach((ele: { input: string; output: string;}, index: number) => {
                 this.channel.append(`Running test ${index} (Time limit is 5000 ms) ... `);
-                let stdout = child_process.execFileSync(file.executablePath, [], {input: ele.input, timeout: 5000}).toString();
-                if(this.compare(stdout, ele.output)){
-                    this.channel.appendLine('Passed.');
-                } else {
-                    this.channel.appendLine('Failed!');
-                    this.channel.appendLine('Your Output:\n' + stdout);
-                    throw new Error('Test failed');
+                try{
+                    let stdout = child_process.execFileSync(file.executablePath, [], {input: ele.input, timeout: 5000}).toString();
+                    if(this.compare(stdout, ele.output)){
+                        this.channel.appendLine('Passed.');
+                    }
+                    else{
+                        this.channel.appendLine('Wrong Answer.\nYour Output:\n' + stdout);
+                    }
+                } catch(err) {
+                    this.channel.appendLine('Failed to execute! Maybe your program have got RE.');
+                    throw new Error;
                 }
             });
         });
