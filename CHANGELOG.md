@@ -6,6 +6,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+### Changed
+
+- Fix time test command for paths including spaces.
+
 ## [0.1.4] - 2020-3-30
 
 ### Changed
@@ -17,7 +21,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ### Changed
 
-- Fix the compile instruction for filenames in the format of `aaa. bbb.cpp` (at least in my environment).
+- Fix the compile command for filenames in the format of `aaa. bbb.cpp` (at least in my environment).
 
 ## [0.1.2] - 2020-3-27
 
