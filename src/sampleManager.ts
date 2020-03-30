@@ -112,6 +112,17 @@ export class SampleManager{
                 }
             });
         }
+        else if(this.currentUrl!.includes('loj')){
+            $('div.ui.existing.segment').each((idx, ele) =>{
+                const prev = $(ele).prev();
+                if(prev.text().startsWith('样例输入')){
+                    inputs.push($(ele.childNodes[0].childNodes[0]).text());
+                }
+                if(prev.text().startsWith('样例输出')){
+                    outputs.push($(ele.childNodes[0].childNodes[0]).text());
+                }
+            });
+        }
         else{
             vscode.window.showErrorMessage('Unsupported site.');
             return [];
