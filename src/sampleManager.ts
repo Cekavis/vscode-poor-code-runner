@@ -115,10 +115,10 @@ export class SampleManager{
         else if(this.currentUrl!.includes('loj')){
             $('div.ui.existing.segment').each((idx, ele) =>{
                 const prev = $(ele).prev();
-                if(prev.text().startsWith('样例输入')){
+                if(prev.text().startsWith('样例输入') || prev.text().startsWith('输入样例')){
                     inputs.push($(ele.childNodes[0].childNodes[0]).text());
                 }
-                if(prev.text().startsWith('样例输出')){
+                if(prev.text().startsWith('样例输出') || prev.text().startsWith('输出样例')){
                     outputs.push($(ele.childNodes[0].childNodes[0]).text());
                 }
             });

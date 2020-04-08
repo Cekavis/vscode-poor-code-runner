@@ -39,7 +39,7 @@
 			},
 			{
 				"command": "extension.batchTest",
-				"title": "Test all samples on Codeforces"
+				"title": "Test all samples"
 			},
 			{
 				"command": "extension.killTimeTest",

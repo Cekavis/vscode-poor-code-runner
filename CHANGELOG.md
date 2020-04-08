@@ -6,9 +6,12 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.1.5] - 2020-4-8
+
 ### Changed
 
 - Fix time test command for paths including spaces.
+- Add another matching pattern for LOJ.
 
 ## [0.1.4] - 2020-3-30
 
