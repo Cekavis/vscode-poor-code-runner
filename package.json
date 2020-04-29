@@ -23,31 +23,31 @@
 		"commands": [
 			{
 				"command": "extension.compile",
-				"title": "Compile C++ file"
+				"title": "Poor: Compile"
 			},
 			{
 				"command": "extension.run",
-				"title": "Run corresponding executable"
+				"title": "Poor: Run"
 			},
 			{
 				"command": "extension.compileRun",
-				"title": "Compile and run"
+				"title": "Poor: Compile and Run"
 			},
 			{
 				"command": "extension.testTime",
-				"title": "Test excutable running time"
+				"title": "Poor: Test Running Time"
 			},
 			{
 				"command": "extension.batchTest",
-				"title": "Test all samples"
+				"title": "Poor: Test All Samples"
 			},
 			{
 				"command": "extension.killTimeTest",
-				"title": "Kill running time test"
+				"title": "Poor: Kill Running Time Test"
 			},
 			{
 				"command": "extension.setUrl",
-				"title": "Set custom problem url"
+				"title": "Poor: Set Custom Problem Url"
 			}
 		],
 		"keybindings": [
@@ -88,7 +88,7 @@
 			"properties": {
 				"poor-code-runner.compilerFlags": {
 					"type": "string",
-					"default": "-Wall -O2 -std=c++11 \"-Wl,--stack=998244353\"",
+					"default": "-Wall -O2 -std=c++11",
 					"description": "Compiler flags for g++"
 				}
 			}

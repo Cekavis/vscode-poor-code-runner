@@ -6,6 +6,13 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.2.0] - 2020-4-29
+
+### Added
+
+- Add support for some linux.
+- Add README
+
 ## [0.1.5] - 2020-4-8
 
 ### Changed

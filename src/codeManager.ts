@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as child_process from 'child_process';
+import * as os from 'os';
 
 export class CodeManager{
     private channel: vscode.OutputChannel;
@@ -25,6 +26,7 @@ export class CodeManager{
             this.executeCommandInTerminal('cd \"' + file.directory + '\"');
             this.executeCommandInTerminal('clear');
             let compilerFlags = vscode.workspace.getConfiguration('poor-code-runner').get('compilerFlags');
+            if(os.platform()==='win32'){ compilerFlags+=' \"-Wl,--stack=998244353\"';}
             this.executeCommandInTerminal('g++ "' + file.name + '" -o "' + file.executable + '" ' + compilerFlags);
             if(callback){
                 callback();
@@ -34,7 +36,7 @@ export class CodeManager{
     public run(){
         const file = this.getFile();
 
-        const process = child_process.exec(`start cmd /c ".\\\"${file.executable}\" & echo. & pause"`, {cwd: file.directory});
+        const process = child_process.exec(this.externalExecutionCommand(), {shell: this.shell()});
         // if(process.status === 0){
         // 	vscode.window.showInformationMessage('Ran successfully!');
         // }
@@ -50,7 +52,7 @@ export class CodeManager{
     public compileRun(){
         const file = this.getFile();
         this.compile(() => {
-            this.executeCommandInTerminal(`start cmd "/c .\\""${file.executable}"" & echo. & pause"`);
+            this.executeCommandInTerminal(this.externalExecutionCommand());
         });
     }
     public testTime(){
@@ -60,16 +62,23 @@ export class CodeManager{
             return;
         }
         const file = this.getFile();
-        this.channel.clear();
-        this.channel.appendLine('Start running ...');
-        this.currentProcess = child_process.exec(`powershell "cd \\"${file.directory}\\"; Measure-Command{&\\"${file.executablePath}\\"}"`, (error, stdout, stderr) => {
-            console.log(`powershell "cd \\"${file.directory}\\"; Measure-Command{&\\"${file.executablePath}\\"}"`);
-            let seconds = stdout.split('\n')[11];
-            this.channel.appendLine(seconds);
-            let milliseconds = stdout.split('\n')[12];
-            this.channel.appendLine(milliseconds);
-            this.currentProcess = undefined;
-        });
+        if(os.platform()==='win32'){
+            this.channel.clear();
+            this.channel.appendLine('Start running ...');
+            this.currentProcess = child_process.exec(`powershell "cd \\"${file.directory}\\"; Measure-Command{&\\"${file.executablePath}\\"}"`, (error, stdout, stderr) => {
+                console.log(`powershell "cd \\"${file.directory}\\"; Measure-Command{&\\"${file.executablePath}\\"}"`);
+                let seconds = stdout.split('\n')[11];
+                this.channel.appendLine(seconds);
+                let milliseconds = stdout.split('\n')[12];
+                this.channel.appendLine(milliseconds);
+                this.currentProcess = undefined;
+            });
+        }
+        else{
+            this.executeCommandInTerminal('cd \"' + file.directory + '\"');
+            this.executeCommandInTerminal('clear');
+            this.executeCommandInTerminal(`time ./"${file.executable}"`);
+        }
         // require("child_process").exec(`start cmd /c ".\\\"${file.executable}\""`, {cwd: file.directory}, () => {
         //     const duration = process.hrtime(startTime);
         //     const channel = vscode.window.createOutputChannel('Poor Code Runner time test');
@@ -127,9 +136,9 @@ export class CodeManager{
             executable: process.platform === 'win32'
                 ? `${path.basename(doc.fileName, path.extname(doc.fileName))}.exe`
                 : path.basename(doc.fileName, path.extname(doc.fileName)),
-            executablePath: path.dirname(doc.fileName)+'\\'+(process.platform === 'win32'
-            ? `${path.basename(doc.fileName, path.extname(doc.fileName))}.exe`
-            : path.basename(doc.fileName, path.extname(doc.fileName)))
+            executablePath: path.dirname(doc.fileName)+(process.platform === 'win32'
+            ? `\\${path.basename(doc.fileName, path.extname(doc.fileName))}.exe`
+            : '/'+path.basename(doc.fileName, path.extname(doc.fileName)))
         };
     }
 
@@ -143,11 +152,22 @@ export class CodeManager{
     private compare (a: string, b: string) {
         return this.reduce(a)===this.reduce(b);
     };
+    private externalExecutionCommand() {
+        const file = this.getFile();
+        return os.platform()==='win32'
+            ? `start cmd "/c ""cd ""${file.directory}"" & .\\""${file.executable}"" & echo. & pause"""`
+            : `gnome-terminal -t '${file.title}' -- bash -c "cd '${file.directory}'; ./'${file.executable}'; read -rsp $'Press any key to continue...\\n' -n1 key"`;
+    }
+    private shell(){
+        return os.platform()==='win32'
+            ? 'C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe'
+            : undefined;
+    }
     private executeCommandInTerminal(command: string) {
         if(!this.terminal){
             this.terminal = vscode.window.createTerminal(
                 'Poor Code Runner',
-                'C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe'
+                this.shell()
             );
         }
         this.terminal.show(true);
