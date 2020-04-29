@@ -5,10 +5,10 @@ import { SampleManager } from './sampleManager';
 export function activate(context: vscode.ExtensionContext) {
 
 	//C:\Users\cmxrynp\AppData\Roaming\Code\User\globalStorage\cekavis.poor-code-runner\samples.json
-	const storagePath = context.globalStoragePath+'\\samples.json';
+	const storagePath = context.globalStoragePath + '\\samples.json';
 	const codeManager = new CodeManager();
 	const sampleManager = new SampleManager(storagePath);
-	
+
 	vscode.window.onDidCloseTerminal(() => {
 		codeManager.onDidCloseTerminal();
 	});
@@ -36,14 +36,14 @@ export function activate(context: vscode.ExtensionContext) {
 		codeManager.killTimeTest();
 	});
 	const setUrl = vscode.commands.registerCommand('extension.setUrl', () => {
-        vscode.window.showInputBox({
-			password:false,
-			ignoreFocusOut:true,
-            prompt:'请输入该文件对应的题目网址',
-        }).then(function(url){
-            console.log('User input: ', url);
+		vscode.window.showInputBox({
+			password: false,
+			ignoreFocusOut: true,
+			prompt: '请输入该文件对应的题目网址',
+		}).then(function (url) {
+			console.log('User input: ', url);
 			sampleManager.update(codeManager.getFile(), url);
-        });
+		});
 	});
 
 	context.subscriptions.push(compile);
@@ -55,4 +55,4 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(setUrl);
 }
 
-export function deactivate() {}
+export function deactivate() { }
