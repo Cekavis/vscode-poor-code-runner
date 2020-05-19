@@ -156,7 +156,7 @@ export class CodeManager {
         const file = this.getFile();
         return os.platform() === 'win32'
             ? `start cmd "/c ""cd ""${file.directory}"" & .\\""${file.executable}"" & echo. & pause"""`
-            : `gnome-terminal -t '${file.title}' -- bash -c "cd '${file.directory}'; ./'${file.executable}'; read -rsp $'Press any key to continue...\\n' -n1 key"`;
+            : `gnome-terminal 2> /dev/null -t '${file.title}' -- bash -c "cd '${file.directory}'; ./'${file.executable}'; read -rsp $'Press any key to continue...\\n' -n1 key"`;
     }
     private shell() {
         return os.platform() === 'win32'
