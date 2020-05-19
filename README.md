@@ -2,6 +2,8 @@
 
 A VSCode extension to compile and test C++ programs in competitive programming.
 
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/08cdc26a8cbf4c9f95642440c57d310f)](https://www.codacy.com/manual/Cekavis/vscode-poor-code-runner?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Cekavis/vscode-poor-code-runner&amp;utm_campaign=Badge_Grade)
+
 ## Features
 
 -   编译 C++ 文件
