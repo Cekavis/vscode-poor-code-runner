@@ -6,7 +6,9 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## Unreleased
 
-## Changed
+## v0.2.1 - 2020-6-18
+
+### Changed
 
 -   Update running command in Ubuntu
 
