@@ -6,18 +6,28 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## Unreleased
 
+## v0.2.2 - 2020-11-20
+
+### Changed
+
+-   Fix a problem at drive switching.
+
+### Added
+
+-   Add description.
+
 ## v0.2.1 - 2020-6-18
 
 ### Changed
 
--   Update running command in Ubuntu
+-   Update running command in Ubuntu.
 
 ## v0.2.0 - 2020-4-29
 
 ### Added
 
 -   Add support for some linux.
--   Add README
+-   Add README.
 
 ## v0.1.5 - 2020-4-8
 
