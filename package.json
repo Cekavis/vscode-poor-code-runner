@@ -2,7 +2,7 @@
   "name": "poor-code-runner",
   "displayName": "Poor Code Runner",
   "description": "A VSCode extension to compile and test C++ programs in competitive programming",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "publisher": "cekavis",
   "license": "GPL-3.0-only",
   "repository": {
